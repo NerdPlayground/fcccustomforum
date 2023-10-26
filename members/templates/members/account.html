@@ -1,0 +1,8 @@
+{% extends "index.html" %}
+
+{% block title %}Account{% endblock %}
+
+{% block content %}
+Hello there, {{ member.username }}<br/>
+Your current trust level in the forum: {{ member.trust_level }}
+{% endblock %}

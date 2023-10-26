@@ -5,13 +5,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
-        <title><!-- your title here--></title>
+        <title>{% block title %}FCC Forum{% endblock %}</title>
         <link rel="icon" href="" type="image/x-icon" sizes="16x16 32x32">
         <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     </head>
 
     <body id="root">
-        <!-- your content here... -->
+        {% block content %}{% endblock %}
         <script src="{% static 'js/main.js' %}"></script>
     </body>
 </html>

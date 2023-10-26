@@ -42,7 +42,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'members',
+    # '',
 ]
+
+# User model
+AUTH_USER_MODEL='members.Member'
+
+# Link to go to after successful login
+LOGIN_REDIRECT_URL='home'
+
+# Link to go to after successful logout
+LOGOUT_REDIRECT_URL='home'
+
+# Console based email
+EMAIL_BACKEND="django.core.mail.backends.console.EmailBackend"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
