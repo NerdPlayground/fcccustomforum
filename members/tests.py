@@ -14,13 +14,6 @@ class MemberTestCase(PocketTestCase):
             password=cls.password,
         )
 
-    def member_login(self):
-        response=self.client.post(reverse("login"),{
-            "username":self.member.username,
-            "password":self.password,
-        })
-        self.assertEqual(response.status_code,302)
-
     def test_signup_url_template(self):
         self.url_template(
             "signup",
@@ -57,7 +50,7 @@ class MemberTestCase(PocketTestCase):
         self.assertEqual(login_response.status_code,302)
 
     def test_password_change_url_template(self):
-        self.member_login()
+        self.member_login(self.member,self.password)
         self.url_template(
             "password_change",
             "registration/password_change_form.html",
@@ -65,7 +58,7 @@ class MemberTestCase(PocketTestCase):
         )
     
     def test_member_change_password(self):
-        self.member_login()
+        self.member_login(self.member,self.password)
         password="asdfgh123!@#"
         response=self.client.post(reverse("password_change"),{
             "old_password":self.password,
@@ -73,9 +66,10 @@ class MemberTestCase(PocketTestCase):
             "new_password2":password
         })
         self.assertEqual(response.status_code,302)
+
         self.password=password
         self.client.get(reverse("logout"))
-        self.member_login()
+        self.member_login(self.member,self.password)
 
     def test_password_reset_url_template(self):
         self.url_template(
