@@ -1,35 +1,18 @@
 from datetime import date
-from .models import Member
 from django.core import mail
 from django.urls import reverse
-from django.test import TestCase
+from pocket.tests import PocketTestCase
+from django.contrib.auth import get_user_model
 
-class MemberTestCase(TestCase):
+class MemberTestCase(PocketTestCase):
     @classmethod
     def setUpTestData(cls):
         cls.password="qwerty123!@#"
-        cls.member=Member.objects.create(
+        cls.member=get_user_model().objects.create_user(
             username="dorobu",
             email="dorobu@gmail.com",
+            password=cls.password,
         )
-        cls.member.set_password(cls.password)
-        cls.member.save()
-
-    def member_login(self):
-        response=self.client.post(reverse("login"),{
-            "username":self.member.username,
-            "password":self.password,
-        })
-        self.assertEqual(response.status_code,302)
-    
-    def url_template(self,url,template,title,kwargs=None,relativeURL=False):
-        response=self.client.get(
-            url if relativeURL 
-            else reverse(url,kwargs=kwargs)
-        )
-        self.assertEqual(response.status_code,200)
-        self.assertTemplateUsed(response,template)
-        self.assertContains(response,title)
 
     def test_signup_url_template(self):
         self.url_template(
@@ -54,7 +37,7 @@ class MemberTestCase(TestCase):
         })
         self.assertEqual(signup_response.status_code,302)
 
-        member=Member.objects.last()
+        member=get_user_model().objects.last()
         self.assertEqual(member.username,"george")
         self.assertEqual(member.email,"george@gmail.com")
         self.assertEqual(member.trust_level,"new")
@@ -67,7 +50,7 @@ class MemberTestCase(TestCase):
         self.assertEqual(login_response.status_code,302)
 
     def test_password_change_url_template(self):
-        self.member_login()
+        self.member_login(self.member,self.password)
         self.url_template(
             "password_change",
             "registration/password_change_form.html",
@@ -75,7 +58,7 @@ class MemberTestCase(TestCase):
         )
     
     def test_member_change_password(self):
-        self.member_login()
+        self.member_login(self.member,self.password)
         password="asdfgh123!@#"
         response=self.client.post(reverse("password_change"),{
             "old_password":self.password,
@@ -83,9 +66,10 @@ class MemberTestCase(TestCase):
             "new_password2":password
         })
         self.assertEqual(response.status_code,302)
+
         self.password=password
         self.client.get(reverse("logout"))
-        self.member_login()
+        self.member_login(self.member,self.password)
 
     def test_password_reset_url_template(self):
         self.url_template(
