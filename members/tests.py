@@ -1,19 +1,18 @@
 from datetime import date
-from .models import Member
 from django.core import mail
 from django.urls import reverse
 from pocket.tests import PocketTestCase
+from django.contrib.auth import get_user_model
 
 class MemberTestCase(PocketTestCase):
     @classmethod
     def setUpTestData(cls):
         cls.password="qwerty123!@#"
-        cls.member=Member.objects.create(
+        cls.member=get_user_model().objects.create_user(
             username="dorobu",
             email="dorobu@gmail.com",
+            password=cls.password,
         )
-        cls.member.set_password(cls.password)
-        cls.member.save()
 
     def member_login(self):
         response=self.client.post(reverse("login"),{
@@ -45,7 +44,7 @@ class MemberTestCase(PocketTestCase):
         })
         self.assertEqual(signup_response.status_code,302)
 
-        member=Member.objects.last()
+        member=get_user_model().objects.last()
         self.assertEqual(member.username,"george")
         self.assertEqual(member.email,"george@gmail.com")
         self.assertEqual(member.trust_level,"new")
