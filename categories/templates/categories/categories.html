@@ -1,0 +1,10 @@
+{% extends "index.html" %}
+
+{% block title %}Categories{% endblock %}
+
+{% block content %}
+    <h2>Categories</h2>
+    {% for category in categories %}
+        <li>{{ category.title }}</li>
+    {% endfor %}
+{% endblock %}
