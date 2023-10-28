@@ -37,7 +37,7 @@ class TopicTestCase(PocketTestCase):
         title="Frameworks"
         content="What frameworks are suitable for web development?"
         response=self.client.post(reverse("create-topic"),{
-            "category":1,
+            "category":self.category.pk,
             "title":title,"content":content,
         })
         self.assertEqual(response.status_code,302)
@@ -74,7 +74,7 @@ class TopicTestCase(PocketTestCase):
         title="Frameworks (Include resources)"
         content="What frameworks are suitable for web development?"
         response=self.client.post(reverse("update-topic",kwargs={"pk":self.topic.pk}),{
-            "category":1,
+            "category":self.category.pk,
             "title":title,"content":content,
         })
         self.assertEqual(response.status_code,302)
