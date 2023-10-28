@@ -11,6 +11,7 @@ class CreateTopicView(CreateView):
     def form_valid(self,form):
         topic=form.save(commit=False)
         topic.author=self.request.user
+        topic.save()
         return super().form_valid(form)
 
 class DetailTopicView(DetailView):
