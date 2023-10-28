@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'members',
     'categories',
     'pocket',
+    'topics',
     # '',
 ]
 

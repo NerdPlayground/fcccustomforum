@@ -1,0 +1,10 @@
+{% extends "index.html" %}
+
+{% block title %}Topics{% endblock %}
+
+{% block content %}
+    <h2>Topics</h2>
+    {% for topic in topics %}
+        <li>{{ topic.title }} - {{ topic.category.title }}</li>
+    {% endfor %}
+{% endblock %}
