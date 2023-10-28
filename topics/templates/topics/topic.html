@@ -6,4 +6,18 @@
     <h2>{{ topic.title }} - {{ topic.category.title }}</h2>
     <span>{{ topic.author.username }}</span>
     <div>{{ topic.content }}</div>
+    <hr/>
+
+    <h3>Replies</h3>
+    {% for reply in topic.replies.all %}
+        <span>{{ reply.member.username }}</span>
+        <div>{{ reply.content }}</div>
+    {% endfor %}
+    <hr/>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Reply</button>
+    </form>
 {% endblock %}
