@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'categories',
     'pocket',
     'topics',
+    'replies',
     # '',
 ]
 

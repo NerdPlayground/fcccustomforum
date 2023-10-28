@@ -24,6 +24,7 @@ urlpatterns = [
     path("accounts/",include("django.contrib.auth.urls")),
     path("categories/",include("categories.urls")),
     path("topics/",include("topics.urls")),
+    path("replies/",include("replies.urls")),
     path("",TemplateView.as_view(template_name="index.html"),name="home"),
     # path("",include(".urls")),
 ]

@@ -7,17 +7,7 @@ from django.contrib.auth import get_user_model
 class CategoryTestCase(PocketTestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.password="qwerty123!@#"
-        cls.author=get_user_model().objects.create_superuser(
-            username="admin",
-            password=cls.password,
-            email="admin@gmail.com",
-        )
-
-        cls.category=Category.objects.create(
-            title="Javascript",author=cls.author,
-            description="Ask questions and share tips for JavaScript.",
-        )
+        super().setUpTestData()
 
     def test_create_category(self):
         self.url_template(
@@ -25,7 +15,7 @@ class CategoryTestCase(PocketTestCase):
             "categories/create_category.html",
             "Category"
         )
-        self.member_login(self.author,self.password)
+        self.member_login(self.admin,self.password)
 
         title="Python"
         description="Ask questions and share tips for Python."
@@ -36,7 +26,7 @@ class CategoryTestCase(PocketTestCase):
         self.assertEqual(response.status_code,302)
 
         category=Category.objects.last()
-        self.assertEqual(category.author,self.author)
+        self.assertEqual(category.author,self.admin)
         self.assertEqual(category.title,title)
         self.assertEqual(category.description,description)
     
@@ -71,7 +61,7 @@ class CategoryTestCase(PocketTestCase):
         self.assertEqual(response.status_code,302)
 
         category=Category.objects.get(pk=self.category.pk)
-        self.assertEqual(category.author,self.author)
+        self.assertEqual(category.author,self.admin)
         self.assertEqual(category.title,title)
         self.assertEqual(category.description,description)
     

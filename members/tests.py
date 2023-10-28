@@ -7,12 +7,7 @@ from django.contrib.auth import get_user_model
 class MemberTestCase(PocketTestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.password="qwerty123!@#"
-        cls.member=get_user_model().objects.create_user(
-            username="dorobu",
-            email="dorobu@gmail.com",
-            password=cls.password,
-        )
+        super().setUpTestData()
 
     def test_signup_url_template(self):
         self.url_template(
@@ -30,16 +25,16 @@ class MemberTestCase(PocketTestCase):
 
     def test_member_signup_login(self):
         signup_response=self.client.post(reverse("signup"),{
-            "username": "george",
-            "email": "george@gmail.com",
+            "username": "nalana",
+            "email": "nalana@gmail.com",
             "password1": self.password,
             "password2": self.password,
         })
         self.assertEqual(signup_response.status_code,302)
 
         member=get_user_model().objects.last()
-        self.assertEqual(member.username,"george")
-        self.assertEqual(member.email,"george@gmail.com")
+        self.assertEqual(member.username,"nalana")
+        self.assertEqual(member.email,"nalana@gmail.com")
         self.assertEqual(member.trust_level,"new")
         self.assertEqual(member.joined_in,date.today())
 
