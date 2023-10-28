@@ -8,37 +8,8 @@ from django.contrib.auth import get_user_model
 class ReplyTestCase(PocketTestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.password="qwerty123!@#"
-
-        cls.member=get_user_model().objects.create_user(
-            username="george",
-            password=cls.password,
-            email="george@gmail.com"
-        )
-
-        cls.admin=get_user_model().objects.create_superuser(
-            username="haken",
-            password=cls.password,
-            email="haken@gmail.com"
-        )
-
-        cls.category=Category.objects.create(
-            title="Python",author=cls.admin,
-            description="Ask anything on Python and its ecosystem"
-        )
-
-        cls.topic=Topic.objects.create(
-            author=cls.member,
-            category=cls.category,
-            title="Frameworks",
-            content="What frameworks are suitable for web development?"
-        )
-
-        cls.reply=Reply.objects.create(
-            member=cls.admin,topic=cls.topic,
-            content="Consider using Django framework."
-        )
-
+        super().setUpTestData()
+    
     def test_reply_to_topic(self):
         self.url_template(
             "topic",
