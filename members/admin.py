@@ -4,7 +4,10 @@ from django.contrib.auth.admin import UserAdmin
 
 class MemberAdmin(UserAdmin):
     model=Member
-    list_display=["username","joined_in","email","is_staff","trust_level"]
+    list_display=[
+        "username","pk","first_name","last_name",
+        "joined_in","email","is_staff","trust_level"
+    ]
     fieldsets=[
         (None,{'fields':['username','password']}),
         ('Personal Info',{'fields':['first_name','last_name','email']}),

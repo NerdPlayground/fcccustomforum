@@ -1,7 +1,8 @@
 from .models import Member
 from django.urls import reverse_lazy
 from .forms import CreateMemberForm
-from django.views.generic import CreateView,DetailView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView,UpdateView
 
 class SignUpMemberView(CreateView):
     form_class=CreateMemberForm
@@ -11,3 +12,8 @@ class SignUpMemberView(CreateView):
 class MemberView(DetailView):
     model=Member
     template_name="members/account.html"
+
+class UpdateMemberView(UpdateView):
+    model=Member
+    fields=["username","first_name","last_name","email"]
+    template_name="members/update-member.html"
