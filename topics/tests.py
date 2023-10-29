@@ -26,6 +26,10 @@ class TopicTestCase(PocketTestCase):
         self.assertEqual(response.status_code,302)
 
         topic=Topic.objects.last()
+        self.assertRedirects(response,reverse(
+            "topic",
+            kwargs={"pk":topic.pk}
+        ))
         self.assertEqual(topic.author,self.member)
         self.assertEqual(topic.category,self.category)
         self.assertEqual(topic.title,title)
@@ -63,6 +67,10 @@ class TopicTestCase(PocketTestCase):
         self.assertEqual(response.status_code,302)
 
         topic=Topic.objects.get(pk=self.topic.pk)
+        self.assertRedirects(response,reverse(
+            "topic",
+            kwargs={"pk":topic.pk}
+        ))
         self.assertEqual(topic.author,self.member)
         self.assertEqual(topic.category,self.category)
         self.assertEqual(topic.title,title)
@@ -83,4 +91,8 @@ class TopicTestCase(PocketTestCase):
             kwargs={"pk":self.topic.pk}
         ))
         self.assertEqual(response.status_code,302)
+        self.assertRedirects(response,reverse(
+            "category",
+            kwargs={"pk":self.topic.category.pk}
+        ))
         self.assertEqual(topics-1,Topic.objects.count())

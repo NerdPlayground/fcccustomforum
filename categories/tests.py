@@ -26,6 +26,10 @@ class CategoryTestCase(PocketTestCase):
         self.assertEqual(response.status_code,302)
 
         category=Category.objects.last()
+        self.assertRedirects(response,reverse(
+            "category",
+            kwargs={"pk":category.pk})
+        )
         self.assertEqual(category.author,self.admin)
         self.assertEqual(category.title,title)
         self.assertEqual(category.description,description)
@@ -61,6 +65,10 @@ class CategoryTestCase(PocketTestCase):
         self.assertEqual(response.status_code,302)
 
         category=Category.objects.get(pk=self.category.pk)
+        self.assertRedirects(response,reverse(
+            "category",
+            kwargs={"pk":category.pk})
+        )
         self.assertEqual(category.author,self.admin)
         self.assertEqual(category.title,title)
         self.assertEqual(category.description,description)
@@ -79,4 +87,5 @@ class CategoryTestCase(PocketTestCase):
             kwargs={"pk":self.category.pk}
         ))
         self.assertEqual(response.status_code,302)
+        self.assertRedirects(response,reverse("categories"))
         self.assertEqual(categories_count-1,Category.objects.count())

@@ -45,6 +45,7 @@ class PocketTestCase(TestCase):
             "password":password,
         })
         self.assertEqual(response.status_code,302)
+        self.assertRedirects(response,reverse("home"))
 
     def url_template(self,url,template,title,kwargs=None,relativeURL=False):
         response=self.client.get(

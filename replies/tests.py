@@ -25,6 +25,10 @@ class ReplyTestCase(PocketTestCase):
             "content":content,"topic":self.topic
         })
         self.assertEqual(response.status_code,302)
+        self.assertRedirects(response,reverse(
+            "topic",
+            kwargs={"pk":self.topic.pk}
+        ))
         self.assertEqual(replies+1,self.topic.replies.count())
         
         reply=Reply.objects.last()
@@ -46,6 +50,10 @@ class ReplyTestCase(PocketTestCase):
             "topic":self.topic,"content":content
         })
         self.assertEqual(response.status_code,302)
+        self.assertRedirects(response,reverse(
+            "topic",
+            kwargs={"pk":self.topic.pk}
+        ))
 
         reply=Reply.objects.get(pk=self.reply.pk)
         self.assertEqual(reply.member,self.admin)
@@ -67,4 +75,8 @@ class ReplyTestCase(PocketTestCase):
             kwargs={"pk":self.reply.pk}
         ))
         self.assertEqual(response.status_code,302)
+        self.assertRedirects(response,reverse(
+            "topic",
+            kwargs={"pk":self.topic.pk}
+        ))
         self.assertEqual(replies-1,self.topic.replies.count())

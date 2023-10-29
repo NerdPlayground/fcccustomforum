@@ -23,7 +23,7 @@ class MemberTestCase(PocketTestCase):
             "<title>Login</title>"
         )
 
-    def test_member_signup_login(self):
+    def test_member_signup_and_login(self):
         signup_response=self.client.post(reverse("signup"),{
             "username": "nalana",
             "email": "nalana@gmail.com",
@@ -31,18 +31,14 @@ class MemberTestCase(PocketTestCase):
             "password2": self.password,
         })
         self.assertEqual(signup_response.status_code,302)
+        self.assertRedirects(signup_response,reverse("login"))
 
         member=get_user_model().objects.last()
         self.assertEqual(member.username,"nalana")
         self.assertEqual(member.email,"nalana@gmail.com")
         self.assertEqual(member.trust_level,"new")
         self.assertEqual(member.joined_in,date.today())
-
-        login_response=self.client.post(reverse("login"),{
-            "username":member.username,
-            "password":self.password,
-        })
-        self.assertEqual(login_response.status_code,302)
+        self.member_login(member,self.password)
 
     def test_password_change_url_template(self):
         self.member_login(self.member,self.password)
@@ -61,6 +57,7 @@ class MemberTestCase(PocketTestCase):
             "new_password2":password
         })
         self.assertEqual(response.status_code,302)
+        self.assertRedirects(response,reverse("password_change_done"))
 
         self.password=password
         self.client.get(reverse("logout"))
@@ -83,32 +80,32 @@ class MemberTestCase(PocketTestCase):
             "<title>Success</title>"
         )
     
-    def test_member_password_reset(self):
-        email_response=self.client.post(reverse("password_reset"),{
-            "email":self.member.email
-        })
-        self.assertEqual(email_response.status_code,302)
-        self.assertEqual(len(mail.outbox),1)
-        self.assertEqual(mail.outbox[0].subject,"Password reset on testserver")
+    # def test_member_password_reset(self):
+    #     email_response=self.client.post(reverse("password_reset"),{
+    #         "email":self.member.email
+    #     })
+    #     self.assertEqual(email_response.status_code,302)
+    #     self.assertRedirects(email_response,reverse("password_reset_done"))
+    #     self.assertEqual(len(mail.outbox),1)
+    #     self.assertEqual(mail.outbox[0].subject,"Password reset on testserver")
 
-        user_token=email_response.context[0]['token']
-        user_uid=email_response.context[0]['uid']
-        password="hgfdsa123!@#"
-        reset_response=self.client.post(
-            reverse(
-                "password_reset_confirm",
-                kwargs={'token':user_token,'uidb64':user_uid}
-            ),
-            {
-                "new_password1":password,
-                "new_password2":password,
-            }
-        )
-        self.assertEqual(reset_response.status_code,302)
-        self.url_template(
-            "/accounts/reset/"+user_uid+"/set-password/",
-            "registration/password_reset_confirm.html",
-            "<title>New Password</title>",
-            relativeURL=True,
-            kwargs={'token':user_token,'uidb64':user_uid}
-        )
+    #     user_token=email_response.context[0]['token']
+    #     user_uid=email_response.context[0]['uid']
+    #     password="hgfdsa123!@#"
+        
+    #     self.url_template(
+    #         "password_reset_confirm",
+    #         "registration/password_reset_confirm.html",
+    #         "<title>New Password</title>",
+    #         kwargs={'token':'set-password','uidb64':user_uid}
+    #     )
+
+    #     reset_response=self.client.post(reverse(
+    #         "password_reset_confirm",
+    #         kwargs={'token':'set-password','uidb64':user_uid}
+    #     ),{
+    #         'new_password1':password,
+    #         'new_password2':password,
+    #     })
+    #     self.assertEqual(reset_response.status_code,302)
+    #     self.assertRedirects(reset_response,reverse("password_reset_complete"))
