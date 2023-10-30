@@ -2,12 +2,13 @@ from django.db import models
 from topics.models import Topic
 from django.urls import reverse
 from django.conf import settings
+from pocket.models import get_sentinel_user
 
 class Reply(models.Model):
     member=models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="replies",
-        on_delete=models.DO_NOTHING
+        on_delete=models.SET(get_sentinel_user)
     )
     topic=models.ForeignKey(
         Topic,

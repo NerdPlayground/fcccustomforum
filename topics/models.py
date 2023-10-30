@@ -2,12 +2,13 @@ from django.db import models
 from django.urls import reverse
 from django.conf import settings
 from categories.models import Category
+from pocket.models import get_sentinel_user
 
 class Topic(models.Model):
     author=models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="topics",
-        on_delete=models.DO_NOTHING,
+        on_delete=models.SET(get_sentinel_user)
     )
     category=models.ForeignKey(
         Category,
