@@ -1,21 +1,36 @@
 from .models import Category
 from django.urls import reverse
-from django.conf import settings
 from pocket.tests import PocketTestCase
-from django.contrib.auth import get_user_model
 
 class CategoryTestCase(PocketTestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
+    
+    def test_member_create_category(self):
+        self.member_login(
+            self.member,
+            self.password
+        )
+        
+        self.url_template(
+            "create-category",
+            "403.html",
+            "<title>Unauthorized Access</title>",
+            status_code=403
+        )
 
     def test_create_category(self):
+        self.member_login(
+            self.admin,
+            self.password
+        )
+        
         self.url_template(
             "create-category",
             "categories/create_category.html",
-            "Category"
+            "<title>Category</title>"
         )
-        self.member_login(self.admin,self.password)
 
         title="Python"
         description="Ask questions and share tips for Python."
@@ -48,7 +63,26 @@ class CategoryTestCase(PocketTestCase):
             "<title>Categories</title>",
         )
     
+    def test_intruder_update_category(self):
+        self.member_login(
+            self.other_admin,
+            self.password
+        )
+
+        self.url_template(
+            "update-category",
+            "403.html",
+            "<title>Unauthorized Access</title>",
+            status_code=403,
+            kwargs={"pk":self.category.pk},
+        )
+
     def test_update_category(self):
+        self.member_login(
+            self.admin,
+            self.password
+        )
+
         self.url_template(
             "update-category",
             "categories/update_category.html",
@@ -73,10 +107,29 @@ class CategoryTestCase(PocketTestCase):
         self.assertEqual(category.title,title)
         self.assertEqual(category.description,description)
     
-    def test_delete_category(self):
+    def test_intruder_delete_category(self):
+        self.member_login(
+            self.other_admin,
+            self.password
+        )
+
         self.url_template(
-            "update-category",
-            "categories/update_category.html",
+            "delete-category",
+            "403.html",
+            "<title>Unauthorized Access</title>",
+            status_code=403,
+            kwargs={"pk":self.category.pk},
+        )
+    
+    def test_delete_category(self):
+        self.member_login(
+            self.admin,
+            self.password
+        )
+
+        self.url_template(
+            "delete-category",
+            "categories/delete_category.html",
             "<title>%s</title>" %(self.category.title),
             kwargs={"pk":self.category.pk}
         )

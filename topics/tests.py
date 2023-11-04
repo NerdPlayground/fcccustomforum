@@ -1,8 +1,6 @@
 from .models import Topic
 from django.urls import reverse
-from categories.models import Category
 from pocket.tests import PocketTestCase
-from django.contrib.auth import get_user_model
 
 class TopicTestCase(PocketTestCase):
     @classmethod
@@ -10,12 +8,16 @@ class TopicTestCase(PocketTestCase):
         super().setUpTestData()
     
     def test_create_topic(self):
+        self.member_login(
+            self.member,
+            self.password
+        )
+
         self.url_template(
             "create-topic",
             "topics/create-topic.html",
             "<title>Create Topic</title>",
         )
-        self.member_login(self.member,self.password)
 
         title="Frameworks"
         content="What frameworks are suitable for web development?"
@@ -50,7 +52,26 @@ class TopicTestCase(PocketTestCase):
             "<title>Topics</title>"
         )
     
+    def test_intruder_update_topic(self):
+        self.member_login(
+            self.other_member,
+            self.password
+        )
+        
+        self.url_template(
+            "update-topic",
+            "403.html",
+            "<title>Unauthorized Access</title>",
+            status_code=403,
+            kwargs={"pk":self.topic.pk}
+        )
+    
     def test_update_topic(self):
+        self.member_login(
+            self.member,
+            self.password
+        )
+
         self.url_template(
             "update-topic",
             "topics/update-topic.html",
@@ -77,7 +98,26 @@ class TopicTestCase(PocketTestCase):
         self.assertEqual(topic.content,content)
         self.assertFalse(topic.solved)
     
+    def test_intruder_delete_topic(self):
+        self.member_login(
+            self.other_member,
+            self.password
+        )
+        
+        self.url_template(
+            "delete-topic",
+            "403.html",
+            "<title>Unauthorized Access</title>",
+            status_code=403,
+            kwargs={"pk":self.topic.pk}
+        )
+    
     def test_delete_topic(self):
+        self.member_login(
+            self.member,
+            self.password
+        )
+        
         self.url_template(
             "delete-topic",
             "topics/delete-topic.html",
