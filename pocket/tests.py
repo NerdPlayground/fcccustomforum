@@ -10,16 +10,28 @@ class PocketTestCase(TestCase):
     def setUpTestData(cls):
         cls.password="qwerty123!@#"
 
+        cls.admin=get_user_model().objects.create_superuser(
+            username="haken",
+            password=cls.password,
+            email="haken@gmail.com"
+        )
+
+        cls.other_admin=get_user_model().objects.create_superuser(
+            username="william",
+            password=cls.password,
+            email="william@gmail.com"
+        )
+
         cls.member=get_user_model().objects.create_user(
             username="george",
             password=cls.password,
             email="george@gmail.com"
         )
 
-        cls.admin=get_user_model().objects.create_superuser(
-            username="haken",
+        cls.other_member=get_user_model().objects.create_user(
+            username="kitawi",
             password=cls.password,
-            email="haken@gmail.com"
+            email="kitawi@gmail.com"
         )
 
         cls.category=Category.objects.create(
@@ -45,12 +57,13 @@ class PocketTestCase(TestCase):
             "password":password,
         })
         self.assertEqual(response.status_code,302)
+        self.assertRedirects(response,reverse("home"))
 
-    def url_template(self,url,template,title,kwargs=None,relativeURL=False):
+    def url_template(self,url,template,title,kwargs=None,relativeURL=False,status_code=200):
         response=self.client.get(
             url if relativeURL 
             else reverse(url,kwargs=kwargs)
         )
-        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.status_code,status_code)
         self.assertTemplateUsed(response,template)
-        self.assertContains(response,title)
+        self.assertContains(response,title,status_code=status_code)
