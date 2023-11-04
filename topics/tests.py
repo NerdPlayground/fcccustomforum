@@ -8,20 +8,22 @@ class TopicTestCase(PocketTestCase):
         super().setUpTestData()
     
     def test_create_topic(self):
+        url_name="create-topic"
+
         self.member_login(
             self.member,
             self.password
         )
 
         self.url_template(
-            "create-topic",
-            "topics/create-topic.html",
+            url_name,
+            "topics/%s.html" %(url_name),
             "<title>Create Topic</title>",
         )
 
         title="Frameworks"
         content="What frameworks are suitable for web development?"
-        response=self.client.post(reverse("create-topic"),{
+        response=self.client.post(reverse(url_name),{
             "category":self.category.pk,
             "title":title,"content":content,
         })
@@ -67,21 +69,24 @@ class TopicTestCase(PocketTestCase):
         )
     
     def test_update_topic(self):
+        url_name="update-topic"
+        kwargs={"pk":self.topic.pk}
+
         self.member_login(
             self.member,
             self.password
         )
 
         self.url_template(
-            "update-topic",
-            "topics/update-topic.html",
+            url_name,
+            "topics/%s.html" %(url_name),
             "<title>%s Topic</title>" %(self.topic.category.title),
-            kwargs={"pk":self.topic.pk}
+            kwargs=kwargs
         )
 
         title="Frameworks (Include resources)"
         content="What frameworks are suitable for web development?"
-        response=self.client.post(reverse("update-topic",kwargs={"pk":self.topic.pk}),{
+        response=self.client.post(reverse(url_name,kwargs=kwargs),{
             "category":self.category.pk,
             "title":title,"content":content,
         })
@@ -113,23 +118,23 @@ class TopicTestCase(PocketTestCase):
         )
     
     def test_delete_topic(self):
+        url_name="delete-topic"
+        kwargs={"pk":self.topic.pk}
+
         self.member_login(
             self.member,
             self.password
         )
         
         self.url_template(
-            "delete-topic",
-            "topics/delete-topic.html",
+            url_name,
+            "topics/%s.html" %(url_name),
             "<title>%s Topic</title>" %(self.topic.category.title),
-            kwargs={"pk":self.topic.pk}
+            kwargs=kwargs
         )
 
         topics=Topic.objects.count()
-        response=self.client.delete(reverse(
-            "delete-topic",
-            kwargs={"pk":self.topic.pk}
-        ))
+        response=self.client.delete(reverse(url_name,kwargs=kwargs))
         self.assertEqual(response.status_code,302)
         self.assertRedirects(response,reverse(
             "category",

@@ -8,21 +8,24 @@ class ReplyTestCase(PocketTestCase):
         super().setUpTestData()
     
     def test_reply_to_topic(self):
+        url_name="topic"
+        kwargs={"pk":self.topic.pk}
+
         self.member_login(
             self.admin,
             self.password
         )
 
         self.url_template(
-            "topic",
-            "topics/topic.html",
+            url_name,
+            "topics/%s.html" %(url_name),
             "<title>%s</title>" %(self.topic.title),
-            kwargs={"pk":self.topic.pk}
+            kwargs=kwargs
         )
         
         replies=self.topic.replies.count()
         content="Consider using the Django Project as a resource"
-        response=self.client.post(reverse("topic",kwargs={"pk":self.topic.pk}),{
+        response=self.client.post(reverse(url_name,kwargs=kwargs),{
             "content":content,"topic":self.topic
         })
         self.assertEqual(response.status_code,302)
@@ -52,20 +55,23 @@ class ReplyTestCase(PocketTestCase):
         )
 
     def test_update_reply_to_topic(self):
+        url_name="update-reply"
+        kwargs={"pk":self.reply.pk}
+
         self.member_login(
             self.admin,
             self.password
         )
 
         self.url_template(
-            "update-reply",
-            "replies/update-reply.html",
+            url_name,
+            "replies/%s.html" %(url_name),
             "<title>%s</title>" %(self.reply.topic.title),
-            kwargs={"pk":self.reply.pk}
+            kwargs=kwargs
         )
         
         content=self.reply.content+" Start with Django for Beginners by Vincent Williams"
-        response=self.client.post(reverse("update-reply",kwargs={"pk":self.reply.pk}),{
+        response=self.client.post(reverse(url_name,kwargs=kwargs),{
             "topic":self.topic,"content":content
         })
         self.assertEqual(response.status_code,302)
@@ -94,23 +100,23 @@ class ReplyTestCase(PocketTestCase):
         )
 
     def test_delete_reply_to_topic(self):
+        url_name="delete-reply"
+        kwargs={"pk":self.reply.pk}
+
         self.member_login(
             self.admin,
             self.password
         )
         
         self.url_template(
-            "delete-reply",
-            "replies/delete-reply.html",
+            url_name,
+            "replies/%s.html" %(url_name),
             "<title>%s</title>" %(self.reply.topic.title),
-            kwargs={"pk":self.reply.pk}
+            kwargs=kwargs
         )
 
         replies=self.topic.replies.count()
-        response=self.client.delete(reverse(
-            "delete-reply",
-            kwargs={"pk":self.reply.pk}
-        ))
+        response=self.client.delete(reverse(url_name,kwargs=kwargs))
         self.assertEqual(response.status_code,302)
         self.assertRedirects(response,reverse(
             "topic",

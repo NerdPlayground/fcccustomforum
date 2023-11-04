@@ -13,15 +13,17 @@ class MemberTestCase(PocketTestCase):
         super().setUpTestData()
 
     def test_member_signup_and_login(self):
+        url_name="signup"
+
         self.url_template(
-            "signup",
-            "members/signup.html",
+            url_name,
+            "members/%s.html" %(url_name),
             "<title>Sign Up</title>"
         )
 
         username="nalana"
         email="nalana@gmail.com"
-        signup_response=self.client.post(reverse("signup"),{
+        signup_response=self.client.post(reverse(url_name),{
             "username":username,
             "email":email,
             "password1":self.password,
@@ -44,19 +46,21 @@ class MemberTestCase(PocketTestCase):
         self.member_login(member,self.password)
     
     def test_member_change_password(self):
+        url_name="password_change"
+
         self.member_login(
             self.member,
             self.password
         )
         
         self.url_template(
-            "password_change",
-            "registration/password_change_form.html",
+            url_name,
+            "registration/%s_form.html" %(url_name),
             "<title>Change Password</title>"
         )
         
         password="asdfgh123!@#"
-        response=self.client.post(reverse("password_change"),{
+        response=self.client.post(reverse(url_name),{
             "old_password":self.password,
             "new_password1":password,
             "new_password2":password
@@ -80,7 +84,7 @@ class MemberTestCase(PocketTestCase):
             "registration/password_reset_done.html",
             "<title>Email Sent</title>"
         )
-        
+
         self.url_template(
             "password_reset_complete",
             "registration/password_reset_complete.html",
@@ -102,22 +106,25 @@ class MemberTestCase(PocketTestCase):
         )
     
     def test_member_change_information(self):
+        url_name="update-member"
+        kwargs={"pk":self.member.pk}
+
         self.member_login(
             self.member,
             self.password
         )
 
         self.url_template(
-            "update-member",
-            "members/update-member.html",
+            url_name,
+            "members/%s.html" %(url_name),
             "<title>Update Information</title>",
-            kwargs={"pk":self.member.pk}
+            kwargs=kwargs
         )
 
         email=self.member.email
         username=self.member.username
         first_name,last_name="George","Mobisa"
-        response=self.client.post(reverse("update-member",kwargs={"pk":self.member.pk}),{
+        response=self.client.post(reverse(url_name,kwargs=kwargs),{
             "email":email,"username":username,
             "first_name":first_name,"last_name":last_name
         })
@@ -145,25 +152,25 @@ class MemberTestCase(PocketTestCase):
         )
     
     def test_member_delete_account(self):
+        url_name="delete-member"
+        kwargs={"pk":self.member.pk}
+
         self.member_login(
             self.member,
             self.password
         )
 
         self.url_template(
-            "delete-member",
-            "members/delete-member.html",
+            url_name,
+            "members/%s.html" %(url_name),
             "<title>Delete Account</title>",
-            kwargs={"pk":self.member.pk}
+            kwargs=kwargs
         )
         
         with self.assertRaisesMessage(Http404,"No Member matches the given query."):
             get_object_or_404(Member,username="DELETED-ACCOUNT")
 
-        response=self.client.delete(reverse(
-            "delete-member",
-            kwargs={"pk":self.member.pk}
-        ))
+        response=self.client.delete(reverse(url_name,kwargs=kwargs))
         self.assertEqual(response.status_code,302)
         self.assertRedirects(response,reverse("home"))
         
