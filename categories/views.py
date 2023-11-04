@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 class CreateCategoryView(LoginRequiredMixin,UserPassesTestMixin,CreateView):
     model=Category
     fields=("title","description",)
-    template_name="categories/create_category.html"
+    template_name="categories/create-category.html"
 
     def form_valid(self,form):
         form.instance.author=self.request.user
@@ -28,7 +28,7 @@ class CategoriesView(ListView):
 class UpdateCategoryView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=Category
     fields=("title","description",)
-    template_name="categories/update_category.html"
+    template_name="categories/update-category.html"
 
     def test_func(self):
         return self.get_object().author==self.request.user
@@ -36,7 +36,7 @@ class UpdateCategoryView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
 class DeleteCategoryView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model=Category
     success_url=reverse_lazy("categories")
-    template_name="categories/delete_category.html"
+    template_name="categories/delete-category.html"
 
     def test_func(self):
         return self.get_object().author==self.request.user

@@ -28,7 +28,7 @@ class CategoryTestCase(PocketTestCase):
         
         self.url_template(
             "create-category",
-            "categories/create_category.html",
+            "categories/create-category.html",
             "<title>Category</title>"
         )
 
@@ -85,7 +85,7 @@ class CategoryTestCase(PocketTestCase):
 
         self.url_template(
             "update-category",
-            "categories/update_category.html",
+            "categories/update-category.html",
             "<title>%s</title>" %(self.category.title),
             kwargs={"pk":self.category.pk}
         )
@@ -129,7 +129,7 @@ class CategoryTestCase(PocketTestCase):
 
         self.url_template(
             "delete-category",
-            "categories/delete_category.html",
+            "categories/delete-category.html",
             "<title>%s</title>" %(self.category.title),
             kwargs={"pk":self.category.pk}
         )
