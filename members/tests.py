@@ -1,5 +1,6 @@
 from datetime import date
 from .models import Member
+from django.core import mail
 from django.urls import reverse
 from django.http import Http404
 from topics.models import Topic
@@ -178,32 +179,39 @@ class MemberTestCase(PocketTestCase):
         topic=Topic.objects.get(pk=self.topic.pk)
         self.assertEqual(deleted,topic.author)
     
-    # def test_member_password_reset(self):
-    #     email_response=self.client.post(reverse("password_reset"),{
-    #         "email":self.member.email
-    #     })
-    #     self.assertEqual(email_response.status_code,302)
-    #     self.assertRedirects(email_response,reverse("password_reset_done"))
-    #     self.assertEqual(len(mail.outbox),1)
-    #     self.assertEqual(mail.outbox[0].subject,"Password reset on testserver")
+    def test_member_password_reset(self):
+        email_response=self.client.post(reverse("password_reset"),{
+            "email":self.member.email
+        })
+        self.assertEqual(email_response.status_code,302)
+        self.assertRedirects(email_response,reverse("password_reset_done"))
+        self.assertEqual(len(mail.outbox),1)
+        self.assertEqual(mail.outbox[0].subject,"Password reset on testserver")
 
-    #     user_token=email_response.context[0]['token']
-    #     user_uid=email_response.context[0]['uid']
-    #     password="hgfdsa123!@#"
-        
-    #     self.url_template(
-    #         "password_reset_confirm",
-    #         "registration/password_reset_confirm.html",
-    #         "<title>New Password</title>",
-    #         kwargs={'token':'set-password','uidb64':user_uid}
-    #     )
+        user_token=email_response.context[0]['token']
+        user_uid=email_response.context[0]['uid']
+        password="hgfdsa123!@#"
+        url_name="password_reset_confirm"
+        kwargs={'token':"set-password",'uidb64':user_uid}
 
-    #     reset_response=self.client.post(reverse(
-    #         "password_reset_confirm",
-    #         kwargs={'token':'set-password','uidb64':user_uid}
-    #     ),{
-    #         'new_password1':password,
-    #         'new_password2':password,
-    #     })
-    #     self.assertEqual(reset_response.status_code,302)
-    #     self.assertRedirects(reset_response,reverse("password_reset_complete"))
+        link_response=self.client.get(reverse(
+            url_name,
+            kwargs={**kwargs,'token':user_token}
+        ))
+        self.assertEqual(link_response.status_code,302)
+        self.assertRedirects(link_response,reverse(url_name,kwargs=kwargs))
+
+        self.url_template(
+            url_name,
+            "registration/%s.html" %(url_name),
+            "<title>New Password</title>",
+            kwargs=kwargs
+        )
+
+        reset_response=self.client.post(reverse(url_name,kwargs=kwargs),{
+            'new_password1':password,
+            'new_password2':password,
+        })
+        self.assertEqual(reset_response.status_code,302)
+        self.assertRedirects(reset_response,reverse("password_reset_complete"))
+        self.member_login(self.member,password)
