@@ -1,52 +1,29 @@
 from django.urls import reverse
 from django.test import TestCase
-from topics.models import Topic
-from replies.models import Reply
-from categories.models import Category
-from django.contrib.auth import get_user_model
+from topics.factories import TopicFactory
+from replies.factories import ReplyFactory
+from members.factories import MemberFactory
+from categories.factories import CategoryFactory
 
 class PocketTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.password="qwerty123!@#"
+        cls.member,cls.other_member=MemberFactory.create_batch(2)
+        cls.admin,cls.other_admin=MemberFactory.create_batch(2,is_staff=True)
 
-        cls.admin=get_user_model().objects.create_superuser(
-            username="haken",
-            password=cls.password,
-            email="haken@gmail.com"
-        )
-
-        cls.other_admin=get_user_model().objects.create_superuser(
-            username="william",
-            password=cls.password,
-            email="william@gmail.com"
-        )
-
-        cls.member=get_user_model().objects.create_user(
-            username="george",
-            password=cls.password,
-            email="george@gmail.com"
-        )
-
-        cls.other_member=get_user_model().objects.create_user(
-            username="kitawi",
-            password=cls.password,
-            email="kitawi@gmail.com"
-        )
-
-        cls.category=Category.objects.create(
-            title="Python",author=cls.admin,
+        cls.category=CategoryFactory(
+            author=cls.admin,title="Python",
             description="Ask anything on Python and its ecosystem"
         )
 
-        cls.topic=Topic.objects.create(
+        cls.topic=TopicFactory(
             author=cls.member,
-            category=cls.category,
-            title="Frameworks",
+            category=cls.category,title="Frameworks",
             content="What frameworks are suitable for web development?"
         )
 
-        cls.reply=Reply.objects.create(
+        cls.reply=ReplyFactory(
             member=cls.admin,topic=cls.topic,
             content="Consider using Django framework."
         )
