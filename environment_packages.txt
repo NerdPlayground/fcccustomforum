@@ -1,1 +1,1 @@
-pip install django environs[django] psycopg2-binary
+pip install django environs[django] psycopg2-binary coverage
