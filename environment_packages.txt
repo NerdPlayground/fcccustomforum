@@ -1,1 +1,1 @@
-pip install django environs[django] psycopg2-binary coverage
+pip install django environs[django] psycopg2-binary coverage django-debug-toolbar
