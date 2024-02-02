@@ -1,0 +1,18 @@
+[run]
+source=
+    categories/
+    members/
+    pocket/
+    replies/
+    topics/
+omit=
+    venv
+    tests.py
+    */test/*
+    */migrations/*
+    */__init__.py
+
+[report]
+skip_covered=True
+skip_empty=True
+sort=miss
